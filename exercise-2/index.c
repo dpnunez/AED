@@ -4,9 +4,9 @@
 
 #define EXIT_VALUE 4
 
-int readOption(int *option);
-void addName(char **ist);
-void removeName();
+void readOption(int *option);
+void addName(char **list);
+void removeName(char **list);
 void printList(char *list);
 
 int main() {
@@ -18,18 +18,18 @@ int main() {
 
 	do {
 		readOption(&option);
-
 		switch (option) {
 			case 1:
 				addName(&list);
 				break;
 			case 2:
-				printf("Remover nome");
+				removeName(&list);
 				break;
 			case 3:
 				printList(list);
 				break;
 			case 4:
+				free(list);
 				printf("Saindo do programa");
 				break;
 			default:
@@ -43,9 +43,10 @@ int main() {
 
 
 
-int readOption(int *option) {
+void readOption(int *option) {
 	printf("\n\n1) Adicionar nome\n2) Remover nome\n3) Listar\n4) Sair\n\nOpcao: ");
 	scanf("%d", option);
+	system("clear");
 }
 
 void printList(char *list) {
@@ -59,28 +60,67 @@ void printList(char *list) {
 
 // https://stackoverflow.com/questions/13431108/changing-address-contained-by-pointer-using-function
 void addName(char **list) {
-	char currentName[50];
-	int isFirstName;
+	char current_name[50];
+	int new_list_length;
+	int is_first_name;
 
 	printf("Insira o novo nome: ");
-	scanf("%s", currentName);
+	scanf("%s", current_name);
 
 	if(!strlen(*list)) {
-		isFirstName = 1;
+		is_first_name = 1;
 	} else {
-		isFirstName = 0;
+		is_first_name = 0;
 	}
 
 	
-	if(isFirstName) {
-		*list = realloc(*list, (strlen(currentName) + 1) * sizeof(char)); // + 1 because \0;
-		strcat(*list, currentName);
+	if(is_first_name) {
+		new_list_length = (strlen(current_name) + 1);
+		*list = realloc(*list, (strlen(current_name) + 1) * sizeof(char)); // + 1 because \0;
+		strcat(*list, current_name);
 	} else {
-		*list = realloc(*list, (strlen(*list) + 2 + strlen(currentName)) * sizeof(char));
+		new_list_length = (strlen(*list) + 2 + strlen(current_name));
+		*list = realloc(*list, new_list_length * sizeof(char));
 		strcat(*list, ",");
-		strcat(*list, currentName);
+		strcat(*list, current_name);
 	}
 
 	strcat(*list, "\0");
+}
 
+void removeName(char **list) {
+	char name_to_remove[50];
+	char *occurrence, *temp_reallocation, *is_last_name;
+	int name_length, new_list_length, original_list_length;
+	// original_list_length = stren(*list);
+
+	printf("Insira o nome a ser removido: ");
+	scanf("%s", name_to_remove);
+
+	name_length = strlen(name_to_remove);
+
+	occurrence = strstr(*list, name_to_remove);
+
+	if(occurrence == NULL) {
+		return;
+	}
+	is_last_name = strstr(occurrence, ",");
+
+	temp_reallocation = occurrence + name_length + 1;
+
+	while(*temp_reallocation != '\0' && (is_last_name != NULL)) {
+		printf("%c", *temp_reallocation);
+		*occurrence = *temp_reallocation;
+		occurrence++;
+		temp_reallocation++;
+	}
+	
+	if (is_last_name == NULL) {
+		*(occurrence - 1) = '\0';
+	} else {
+		*(occurrence) = '\0';
+	}
+
+
+	*list = realloc(*list, strlen(*list) * sizeof(char));
 }
