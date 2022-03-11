@@ -10,14 +10,15 @@ void removeName(char **list);
 void printList(char *list);
 
 int main() {
-	char *list = NULL;
 	int option;
+  char* list = NULL;
+  list = malloc(1 * sizeof(char));
+  list[0] = '\0';
 
-	list = malloc(1 * sizeof(char));
-	list[0] = '\0';
 
 	do {
 		readOption(&option);
+		
 		switch (option) {
 			case 1:
 				addName(&list);
@@ -28,17 +29,17 @@ int main() {
 			case 3:
 				printList(list);
 				break;
-			case 4:
+			case EXIT_VALUE:
 				free(list);
-				printf("Saindo do programa");
-				break;
+        exit(0);
+        break;
 			default:
 				printf("Comando nao mapeado");
 				break;
 		}
-	} while(option != EXIT_VALUE);
 
-	return 0;
+		printf("-----------------------------");
+	} while(1);
 }
 
 
@@ -46,15 +47,14 @@ int main() {
 void readOption(int *option) {
 	printf("\n\n1) Adicionar nome\n2) Remover nome\n3) Listar\n4) Sair\n\nOpcao: ");
 	scanf("%d", option);
-	system("clear");
 }
 
 void printList(char *list) {
-	if (strlen(list) == 0) {
-		printf("\n\n=== Lista Vazia ===\n\n");
-		return;
-	}
-	printf("\nLista: \n%s\n\n", list);
+	// if (strlen(list) == 0) {
+	// 	printf("\n\n=== Lista Vazia ===\n\n");
+	// 	return;
+	// }
+	// printf("\nLista: \n%s\n", list);
 }
 
 
@@ -90,9 +90,8 @@ void addName(char **list) {
 
 void removeName(char **list) {
 	char name_to_remove[50];
-	char *occurrence, *temp_reallocation, *is_last_name;
-	int name_length, new_list_length, original_list_length;
-	// original_list_length = stren(*list);
+	char *occurrence, *temp_reallocation = NULL, *is_last_name;
+	int name_length, new_list_length, i = 0;
 
 	printf("Insira o nome a ser removido: ");
 	scanf("%s", name_to_remove);
@@ -106,21 +105,39 @@ void removeName(char **list) {
 	}
 	is_last_name = strstr(occurrence, ",");
 
-	temp_reallocation = occurrence + name_length + 1;
+	if (is_last_name != NULL) {
+		temp_reallocation = occurrence + name_length + 1;
+	}
 
-	while(*temp_reallocation != '\0' && (is_last_name != NULL)) {
-		printf("%c", *temp_reallocation);
+	while(temp_reallocation != NULL && *temp_reallocation != '\0') {
 		*occurrence = *temp_reallocation;
 		occurrence++;
 		temp_reallocation++;
 	}
-	
+
 	if (is_last_name == NULL) {
 		*(occurrence - 1) = '\0';
 	} else {
 		*(occurrence) = '\0';
 	}
 
-
 	*list = realloc(*list, strlen(*list) * sizeof(char));
 }
+
+
+// while(*temp_reallocation != '\0' && temp_reallocation != NULL) {
+// 		*occurrence = *temp_reallocation;
+// 		temp_reallocation++;
+// 		occurrence++;
+// 	}
+
+	// if (is_last_name == NULL) {
+	// 	*(occurrence - 1) = '\0';
+	// } else {
+	// 	*(occurrence) = '\0';
+	// }
+
+	// printf("\n(new malloc size: %zu; starts: %p)\n", strlen(*list) + 1, *list);
+	// printList(*list);
+
+	// *list = realloc(*list, strlen(*list) * sizeof(char));
