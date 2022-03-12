@@ -6,8 +6,9 @@
 
 void readOption(int *option);
 void addName(char **list);
-void removeName(char **list);
+void removeNameOccurrence(char **list, char *name_to_remove);
 void printList(char *list);
+void removeName (char** list);
 
 int main() {
 	int option;
@@ -60,7 +61,6 @@ void printList(char *list) {
 }
 
 
-// https://stackoverflow.com/questions/13431108/changing-address-contained-by-pointer-using-function
 void addName(char **list) {
 	char current_name[50];
 	int new_list_length;
@@ -90,21 +90,20 @@ void addName(char **list) {
 	strcat(*list, "\0");
 }
 
-void removeName(char **list) {
-	char name_to_remove[50];
+// Remove some UMA ocorrência do nome por vez
+void removeNameOccurrence(char **list, char *name_to_remove) {
+	// char name_to_remove[50];
 	char 
 		*occurrence, 
 		*temp_reallocation = NULL, 
 		*is_not_last_name;
 	int name_length, new_list_length, i = 0;
 
-	printf("Insira o nome a ser removido: ");
-	scanf("%s", name_to_remove);
 
 	name_length = strlen(name_to_remove);
 	occurrence = strstr(*list, name_to_remove);
 
-	if(occurrence == NULL) {	/* Nome nao aparece na lista */
+	if(occurrence == NULL) {	/* Nao existem mais ocorrências do nome na lista */
 		return;
 	}
 
@@ -127,4 +126,15 @@ void removeName(char **list) {
 	}
 
 	*list = realloc(*list, (strlen(*list) + 1) * sizeof(char));
+
+	removeNameOccurrence(list, name_to_remove);
+}
+
+
+void removeName (char** list) {
+	char name_to_remove[50];
+	printf("Insira o nome a ser removido (max. 50 letras): ");
+	scanf("%s", name_to_remove);
+
+	removeNameOccurrence(list, name_to_remove);
 }
