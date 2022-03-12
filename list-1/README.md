@@ -2,7 +2,9 @@
 # Contato
 
 **Nome**: Daniel Porto Nunez
+
 **matricula**: 20202019
+
 **email**: daniel.pnunes@inf.ufpel.edu.br
 
   
