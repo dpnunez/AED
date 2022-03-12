@@ -92,22 +92,25 @@ void addName(char **list) {
 
 void removeName(char **list) {
 	char name_to_remove[50];
-	char *occurrence, *temp_reallocation = NULL, *is_last_name;
+	char 
+		*occurrence, 
+		*temp_reallocation = NULL, 
+		*is_not_last_name;
 	int name_length, new_list_length, i = 0;
 
 	printf("Insira o nome a ser removido: ");
 	scanf("%s", name_to_remove);
 
 	name_length = strlen(name_to_remove);
-
 	occurrence = strstr(*list, name_to_remove);
 
-	if(occurrence == NULL) {
+	if(occurrence == NULL) {	/* Nome nao aparece na lista */
 		return;
 	}
-	is_last_name = strstr(occurrence, ",");
 
-	if (is_last_name != NULL) {
+	is_not_last_name = strstr(occurrence, ",");
+
+	if (is_not_last_name != NULL) {
 		temp_reallocation = occurrence + name_length + 1;
 	}
 
@@ -117,8 +120,8 @@ void removeName(char **list) {
 		temp_reallocation++;
 	}
 
-	if (is_last_name == NULL) {
-		*(occurrence - 1) = '\0';
+	if (is_not_last_name == NULL && occurrence != *list) {
+			*(occurrence - 1) = '\0';
 	} else {
 		*(occurrence) = '\0';
 	}
