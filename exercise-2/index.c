@@ -125,21 +125,3 @@ void removeName(char **list) {
 
 	*list = realloc(*list, (strlen(*list) + 1) * sizeof(char));
 }
-
-
-// while(*temp_reallocation != '\0' && temp_reallocation != NULL) {
-// 		*occurrence = *temp_reallocation;
-// 		temp_reallocation++;
-// 		occurrence++;
-// 	}
-
-	// if (is_last_name == NULL) {
-	// 	*(occurrence - 1) = '\0';
-	// } else {
-	// 	*(occurrence) = '\0';
-	// }
-
-	// printf("\n(new malloc size: %zu; starts: %p)\n", strlen(*list) + 1, *list);
-	// printList(*list);
-
-	// *list = realloc(*list, strlen(*list) * sizeof(char));
