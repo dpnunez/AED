@@ -50,11 +50,13 @@ void readOption(int *option) {
 }
 
 void printList(char *list) {
-	// if (strlen(list) == 0) {
-	// 	printf("\n\n=== Lista Vazia ===\n\n");
-	// 	return;
-	// }
-	// printf("\nLista: \n%s\n", list);
+	if (strlen(list) > 0) {
+    printf("\nList names: %s\n", list);
+  } else {
+    printf("\n*****************************");
+    printf("\n* A lista encontra-se vazia *");
+    printf("\n*****************************\n");
+  }
 }
 
 
@@ -121,7 +123,7 @@ void removeName(char **list) {
 		*(occurrence) = '\0';
 	}
 
-	*list = realloc(*list, strlen(*list) * sizeof(char));
+	*list = realloc(*list, (strlen(*list) + 1) * sizeof(char));
 }
 
 
