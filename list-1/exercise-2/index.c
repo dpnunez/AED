@@ -6,9 +6,9 @@
 
 void readOption(int *option);
 void addName(char **list);
+void removeName (char** list);
 void removeNameOccurrence(char **list, char *name_to_remove);
 void printList(char *list);
-void removeName (char** list);
 
 int main() {
 	int option;
@@ -60,7 +60,6 @@ void printList(char *list) {
   }
 }
 
-
 void addName(char **list) {
 	char current_name[50];
 	int new_list_length;
@@ -78,10 +77,10 @@ void addName(char **list) {
 	
 	if(is_first_name) {
 		new_list_length = (strlen(current_name) + 1);
-		*list = realloc(*list, (strlen(current_name) + 1) * sizeof(char)); // + 1 because \0;
+		*list = realloc(*list, (strlen(current_name) + 1) * sizeof(char)); // + 1 pelo \0;
 		strcat(*list, current_name);
 	} else {
-		new_list_length = (strlen(*list) + 2 + strlen(current_name));
+		new_list_length = (strlen(*list) + 2 + strlen(current_name)); // + 2 pelo \0 e , 
 		*list = realloc(*list, new_list_length * sizeof(char));
 		strcat(*list, ",");
 		strcat(*list, current_name);
@@ -92,7 +91,6 @@ void addName(char **list) {
 
 // Remove some UMA ocorrência do nome por vez
 void removeNameOccurrence(char **list, char *name_to_remove) {
-	// char name_to_remove[50];
 	char 
 		*occurrence, 
 		*temp_reallocation = NULL, 
