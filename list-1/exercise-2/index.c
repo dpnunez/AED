@@ -13,7 +13,7 @@ void printList(char *list);
 int main() {
 	int option;
   char* list = NULL;
-  list = malloc(1 * sizeof(char));
+  list = (char *)malloc(1 * sizeof(char));
   list[0] = '\0';
 
 
@@ -77,11 +77,11 @@ void addName(char **list) {
 	
 	if(is_first_name) {
 		new_list_length = (strlen(current_name) + 1);
-		*list = realloc(*list, (strlen(current_name) + 1) * sizeof(char)); // + 1 pelo \0;
+		*list = (char *)realloc(*list, (strlen(current_name) + 1) * sizeof(char)); // + 1 pelo \0;
 		strcat(*list, current_name);
 	} else {
 		new_list_length = (strlen(*list) + 2 + strlen(current_name)); // + 2 pelo \0 e , 
-		*list = realloc(*list, new_list_length * sizeof(char));
+		*list = (char *)realloc(*list, new_list_length * sizeof(char));
 		strcat(*list, ",");
 		strcat(*list, current_name);
 	}
@@ -123,7 +123,7 @@ void removeNameOccurrence(char **list, char *name_to_remove) {
 		*(occurrence) = '\0';
 	}
 
-	*list = realloc(*list, (strlen(*list) + 1) * sizeof(char));
+	*list = (char *)realloc(*list, (strlen(*list) + 1) * sizeof(char));
 
 	removeNameOccurrence(list, name_to_remove);
 }
