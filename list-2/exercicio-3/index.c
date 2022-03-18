@@ -8,7 +8,10 @@
 #define LIST_VALUE 4
 #define EXIT_VALUE 5
 
-#define CONTACT_SIZE sizeof(int) * 2 + sizeof(char) * 10
+#define COUNTER_SIZE sizeof(int)
+#define NAME_SIZE sizeof(char) * 10
+#define AGE_SIZE sizeof(int)
+#define NUMBER_SIZE sizeof(int)
 
 void getOption(int *option);
 void createContact(void **contact_list);
@@ -58,14 +61,28 @@ void getOption(int *option) {
 	scanf("%d", option);
 }
 
+// Length = quantidade de contatos
+// Size = tamanho em bytes da lista
 void createContact(void **contact_list) {
-	int contact_list_length = *(int *)(*contact_list);
-	int contact_list_size = sizeof(int) + (contact_list_length * CONTACT_SIZE);
-	int next_contact_list_size = sizeof(int) + ((contact_list_length + 1) * CONTACT_SIZE);
+	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
+	int current_list_length = *(int *)(*contact_list);
+	int current_list_size = COUNTER_SIZE + (current_list_length * contact_size);
+	int next_contact_list_size = current_list_size + contact_size;
 
 	*contact_list = realloc(*contact_list, next_contact_list_size);
+	void *cursor = (*contact_list + (contact_size * current_list_length) + COUNTER_SIZE);
 
-	printf("\nNome:");
-	scanf("%s", (char *)(contact_list + contact_list_size));
-	printf("\n%s\n", (char *)(contact_list + contact_list_size));
+	printf("Nome: ");
+	scanf("%s", (char *)cursor);
+	cursor += NAME_SIZE;
+
+	printf("Idade: ");
+	scanf("%d", (int *)cursor);
+	cursor += AGE_SIZE;
+
+	printf("Telefone: ");
+	scanf("%d", (int *)cursor);
+	*(int *)(*contact_list) += 1;
+
+	printf("Adicionado com sucesso\n\n");
 }
