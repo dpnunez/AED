@@ -15,6 +15,7 @@
 
 void getOption(int *option);
 void createContact(void **contact_list);
+void printContacts(void **contact_list);
 
 int main() {
 	int option;
@@ -41,6 +42,7 @@ int main() {
 			case FIND_VALUE:
 				break;
 			case LIST_VALUE:
+				printContacts(&pBuffer);
 				break;
 			case EXIT_VALUE:
 				break;
@@ -82,7 +84,30 @@ void createContact(void **contact_list) {
 
 	printf("Telefone: ");
 	scanf("%d", (int *)cursor);
-	*(int *)(*contact_list) += 1;
 
+	*(int *)(*contact_list) += 1;
 	printf("Adicionado com sucesso\n\n");
+}
+
+void printContacts(void **contact_list) {
+	int index;
+	int current_list_length = *(int *)(*contact_list);
+	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
+	void *cursor = NULL;
+
+	printf("\n\n\n===Lista de contatos: ===\n");
+	for(index = 0; index < current_list_length; index++) {
+		printf("Contato %d: \n", index + 1);
+		
+		cursor = (char *)(*contact_list + COUNTER_SIZE + (index * contact_size));
+		printf("  |Nome: %s\n", (char *)cursor);
+
+		cursor += NAME_SIZE;
+		printf("  |Idade: %d\n", *(int *)cursor);
+
+		cursor += AGE_SIZE;
+		printf("  |Telefone: %d\n\n\n", *(int *)cursor);
+	}
+	printf("=========================\n\n\n");
+
 }
