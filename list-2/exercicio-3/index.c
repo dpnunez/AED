@@ -16,6 +16,8 @@
 void getOption(int *option);
 void createContact(void **contact_list);
 void printContacts(void **contact_list);
+void *findContact(void **contact_list, char *contact_name);
+void searchContact(void **contact_list);
 
 int main() {
 	int option;
@@ -40,6 +42,7 @@ int main() {
 			case REMOVE_VALUE:
 				break;
 			case FIND_VALUE:
+				searchContact(&pBuffer);
 				break;
 			case LIST_VALUE:
 				printContacts(&pBuffer);
@@ -109,5 +112,41 @@ void printContacts(void **contact_list) {
 		printf("  |Telefone: %d\n\n\n", *(int *)cursor);
 	}
 	printf("=========================\n\n\n");
+}
 
+void searchContact(void **contact_list) {
+	char *contact_name = (char *)malloc(sizeof(char) * 10);
+	void *contact = NULL;
+
+	if (contact_name == NULL) {
+		printf("Ocorreu um erro ao buscar o usuário");
+		return;
+	}
+
+	printf("Insira o nome do usuário: ");
+	scanf("%s", contact_name);
+
+	contact = findContact(contact_list, contact_name);
+	printf("  |Nome: %s\n", (char *)contact);
+
+	contact += NAME_SIZE;
+	printf("  |Idade: %d\n", *(int *)contact);
+
+	contact += AGE_SIZE;
+	printf("  |Telefone: %d\n\n\n", *(int *)contact);
+}
+
+void *findContact(void **contact_list, char *contact_name) {
+	int current_list_length = *(int *)(*contact_list);
+	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
+
+	int index;
+	char *cursor_name = (char *)(*contact_list + COUNTER_SIZE);
+
+	for(index = 0; index < current_list_length; index++) {
+		cursor_name += index * contact_size;
+		if(strstr((char *)cursor_name, contact_name)) {
+			return cursor_name;
+		}
+	}
 }
