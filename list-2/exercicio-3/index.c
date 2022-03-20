@@ -18,6 +18,8 @@ void createContact(void **contact_list);
 void printContacts(void **contact_list);
 void *findContact(void **contact_list, char *contact_name);
 void searchContact(void **contact_list);
+void deleteContact(void **contact_list);
+int isLastContact(void **contact_list, void *contact_to_delete);
 
 int main() {
 	int option;
@@ -40,6 +42,7 @@ int main() {
 				createContact(&pBuffer);
 				break;
 			case REMOVE_VALUE:
+				deleteContact(&pBuffer);
 				break;
 			case FIND_VALUE:
 				searchContact(&pBuffer);
@@ -127,6 +130,11 @@ void searchContact(void **contact_list) {
 	scanf("%s", contact_name);
 
 	contact = findContact(contact_list, contact_name);
+	if(!contact) {
+		printf("Contato nao encontrado\n\n");
+		return;
+	}
+
 	printf("  |Nome: %s\n", (char *)contact);
 
 	contact += NAME_SIZE;
@@ -134,6 +142,8 @@ void searchContact(void **contact_list) {
 
 	contact += AGE_SIZE;
 	printf("  |Telefone: %d\n\n\n", *(int *)contact);
+
+	free(contact_name);
 }
 
 void *findContact(void **contact_list, char *contact_name) {
@@ -144,9 +154,47 @@ void *findContact(void **contact_list, char *contact_name) {
 	char *cursor_name = (char *)(*contact_list + COUNTER_SIZE);
 
 	for(index = 0; index < current_list_length; index++) {
-		cursor_name += index * contact_size;
-		if(strstr((char *)cursor_name, contact_name)) {
+		cursor_name += contact_size;
+		if(strstr(cursor_name, contact_name)) {
 			return cursor_name;
 		}
 	}
+
+	cursor_name = NULL;
+	return cursor_name;
 }
+
+void deleteContact(void **contact_list) {
+	char *contact_name = (char *)malloc(sizeof(char) * 10);
+	void *contact_to_delete, *contacts_to_move;
+
+	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
+	int current_list_length = *(int *)(*contact_list);
+	int current_list_size = COUNTER_SIZE + (current_list_length * contact_size);
+
+	printf("Insira o nome do contato a ser deletado: ");
+	scanf("%s", contact_name);
+
+	contact_to_delete = findContact(contact_list, contact_name);
+	if(!contact_to_delete) {
+		printf("Contato nao encontrado\n");
+		return;
+	}
+
+	contacts_to_move = (contact_to_delete + contact_size);
+
+	if(isLastContact(contact_list, contact_to_delete)) {
+		*contact_list = realloc(*contact_list, current_list_size - contact_size);
+	} else {
+		printf("NAO É O ULTIMO");
+	}
+	*(int *)(*contact_list) -= 1;
+	free(contact_name);
+}
+
+
+int isLastContact(void **contact_list, void *contact_to_delete) {
+	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
+	int current_list_length = *(int *)(*contact_list);
+	return (*contact_list + COUNTER_SIZE) + ((current_list_length - 1) * contact_size) == contact_to_delete;
+} 
