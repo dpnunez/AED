@@ -8,8 +8,10 @@
 #define LIST_VALUE 4
 #define EXIT_VALUE 5
 
+#define NAME_LENGTH 10
+
 #define COUNTER_SIZE sizeof(int)
-#define NAME_SIZE sizeof(char) * 10
+#define NAME_SIZE sizeof(char) * NAME_LENGTH
 #define AGE_SIZE sizeof(int)
 #define NUMBER_SIZE sizeof(int)
 
@@ -20,6 +22,7 @@ void *findContact(void **contact_list, char *contact_name);
 void searchContact(void **contact_list);
 void deleteContact(void **contact_list);
 int isLastContact(void **contact_list, void *contact_to_delete);
+int getContactIndex(void **contact_list, void *pMove);
 
 int main() {
 	int option;
@@ -171,23 +174,52 @@ void deleteContact(void **contact_list) {
 	int contact_size = NAME_SIZE + AGE_SIZE + NUMBER_SIZE;
 	int current_list_length = *(int *)(*contact_list);
 	int current_list_size = COUNTER_SIZE + (current_list_length * contact_size);
+	int should_continue_moving = 1;
+	int index_move_name;
 
 	printf("Insira o nome do contato a ser deletado: ");
 	scanf("%s", contact_name);
 
 	contact_to_delete = findContact(contact_list, contact_name);
+
 	if(!contact_to_delete) {
 		printf("Contato nao encontrado\n");
 		return;
 	}
 
-	contacts_to_move = (contact_to_delete + contact_size);
+	if(!isLastContact(contact_list, contact_to_delete)) {
+		contacts_to_move = (contact_to_delete + contact_size);
+		printf("Contatos a mover");
+		do {
+			if (isLastContact(contact_list, contacts_to_move)) {
+				should_continue_moving = 0;
+			}
 
-	if(isLastContact(contact_list, contact_to_delete)) {
-		*contact_list = realloc(*contact_list, current_list_size - contact_size);
-	} else {
-		printf("NAO É O ULTIMO");
+			// Move Name
+			for(index_move_name = 0; index_move_name < NAME_LENGTH; index_move_name ++) {
+				*(char *)(contact_to_delete + (sizeof(char) * index_move_name)) = *(char *)(contacts_to_move + (sizeof(char) * index_move_name));
+			}
+
+			contacts_to_move += NAME_SIZE;
+			contact_to_delete += NAME_SIZE;
+
+			// Move age
+			*(int *)contact_to_delete = *(int *)contacts_to_move;
+
+			contacts_to_move += AGE_SIZE;
+			contact_to_delete += AGE_SIZE;
+
+			// Move phone
+			*(int *)contact_to_delete = *(int *)contacts_to_move;
+
+			if(should_continue_moving) {
+				contacts_to_move += NUMBER_SIZE;
+				contact_to_delete += NUMBER_SIZE;
+			}
+		} while(should_continue_moving);
 	}
+
+	*contact_list = realloc(*contact_list, current_list_size - contact_size);
 	*(int *)(*contact_list) -= 1;
 	free(contact_name);
 }
