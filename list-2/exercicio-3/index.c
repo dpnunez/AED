@@ -28,14 +28,14 @@ int main() {
 	int option;
 	void *pBuffer = NULL;
 
-	pBuffer = (void *)malloc(1 * sizeof(int));
+	pBuffer = (void *)malloc(COUNTER_SIZE);
 
 	if(pBuffer == NULL) {
 		printf("Error ao tentar alocar a memória");
 		exit(1);
 	}
 
-	*(int *)pBuffer = 0; // pBuffer[0] = 0?
+	*(int *)pBuffer = 0;
 
 	do {
 		getOption(&option);
@@ -133,6 +133,7 @@ void searchContact(void **contact_list) {
 	scanf("%s", contact_name);
 
 	contact = findContact(contact_list, contact_name);
+
 	if(!contact) {
 		printf("Contato nao encontrado\n\n");
 		return;
@@ -218,6 +219,7 @@ void deleteContact(void **contact_list) {
 		} while(should_continue_moving);
 	}
 
+	
 	*contact_list = realloc(*contact_list, current_list_size - contact_size);
 	*(int *)(*contact_list) -= 1;
 	free(contact_name);
