@@ -54,11 +54,11 @@ int main() {
 				printContacts(&pBuffer);
 				break;
 			case EXIT_VALUE:
+				free(pBuffer);
+				return 0;
 				break;
 		}
 	} while(1);
-
-	return 0;
 }
 
 void getOption(int *option) {
@@ -157,10 +157,10 @@ void *findContact(void **contact_list, char *contact_name) {
 	char *cursor_name = (char *)(*contact_list + COUNTER_SIZE);
 
 	for(index = 0; index < current_list_length; index++) {
-		cursor_name += contact_size;
 		if(strstr(cursor_name, contact_name)) {
 			return cursor_name;
 		}
+		cursor_name += contact_size;
 	}
 
 	cursor_name = NULL;
@@ -189,7 +189,6 @@ void deleteContact(void **contact_list) {
 
 	if(!isLastContact(contact_list, contact_to_delete)) {
 		contacts_to_move = (contact_to_delete + contact_size);
-		printf("Contatos a mover");
 		do {
 			if (isLastContact(contact_list, contacts_to_move)) {
 				should_continue_moving = 0;
