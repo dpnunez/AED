@@ -32,6 +32,7 @@ void createPerson(void *pBuffer);
 void *getBufferRef(void *pBuffer, size_t data_address);
 void showBuffer(void *pBuffer);
 void listPersons(void *pBuffer);
+void findPerson(void *pBuffer);
 
 Person personList[list_length];
 
@@ -61,7 +62,7 @@ int main() {
 				// deleteContact(&pBuffer);
 				break;
 			case FIND_VALUE:
-				// searchContact(&pBuffer);
+				findPerson(pBuffer);
 				break;
 			case LIST_VALUE:
 				listPersons(pBuffer);
@@ -127,6 +128,26 @@ void *getBufferRef(void *pBuffer, size_t data_address) {
 }
 
 void showBuffer(void *pBuffer) {
-	printf("Opção: %d", *(int *)(getBufferRef(pBuffer, option_address)));
-	printf("Contador: %d", *(int *)(getBufferRef(pBuffer, counter_address)));
+	printf("\n\nOpção: %d  ", *(int *)(getBufferRef(pBuffer, option_address)));
+	printf("Contador: %d\n\n", *(int *)(getBufferRef(pBuffer, counter_address)));
+}
+
+void findPerson(void *pBuffer) {
+	int *counter = (int *)(getBufferRef(pBuffer, counter_address));
+	int *index = (int *)(getBufferRef(pBuffer, loop_counter_address));
+	char *nameBuffer = (char *)(getBufferRef(pBuffer, name_address));
+
+	printf("Insira o nome a ser pesquisado: ");
+	scanf("%s", nameBuffer);
+
+	for(*index=0; *index<*counter; *index+=1) {
+		if(strstr(personList[*index].name, nameBuffer)) {
+			printf("_________________\n");
+			printf("| Nome: %s\n", personList[*index].name);
+			printf("| Idade: %d\n", personList[*index].age);
+			printf("| Telefone: %d\n", personList[*index].phone);
+		}
+	}
+	printf("_________________\n\n\n");
+
 }
