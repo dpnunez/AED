@@ -33,9 +33,11 @@ int main() {
 
 	do {
 		showMenu(&option);
-		if(option == EXIT_VALUE) break;
+		if(option == EXIT_VALUE) {
+			listPessoas(pBuffer, *counter);
+			break;
+		};
 		createPessoa(&pBuffer, counter);
-		// listPessoas(pBuffer, *counter); // To print list
 	} while(1);
 
 	free(counter);
@@ -80,7 +82,7 @@ void listPessoas(Pessoa *pBuffer, int listLength) {
 	for(i=0; i<listLength; i++) {
 		printf("Nome: %s\n", pBuffer[i].nome);
 		printf("idade: %d\n", pBuffer[i].idade);
-		printf("altura: %d\n", pBuffer[i].altura);
+		printf("altura: %d\n\n\n", pBuffer[i].altura);
 	}
 
 	printf("============\n\n");
