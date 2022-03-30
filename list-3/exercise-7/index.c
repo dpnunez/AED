@@ -30,7 +30,6 @@ typedef struct {
 void getOption(int *option);
 void createPerson(void *pBuffer);
 void *getBufferRef(void *pBuffer, size_t data_address);
-void showBuffer(void *pBuffer);
 void listPersons(void *pBuffer);
 void findPerson(void *pBuffer);
 void deletePerson(void *pBuffer);
@@ -74,9 +73,6 @@ int main() {
 				return 0;
 				break;
 		}
-
-	showBuffer(pBuffer);
-
 	} while(1);
 }
 
@@ -129,10 +125,6 @@ void *getBufferRef(void *pBuffer, size_t data_address) {
 	return pBuffer + data_address;
 }
 
-void showBuffer(void *pBuffer) {
-	printf("\n\nOpção: %d  ", *(int *)(getBufferRef(pBuffer, option_address)));
-	printf("Contador: %d\n\n", *(int *)(getBufferRef(pBuffer, counter_address)));
-}
 
 void deletePerson(void *pBuffer) {
 	char *nameBuffer = (char *)(getBufferRef(pBuffer, name_address));
