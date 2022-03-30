@@ -46,11 +46,13 @@ int main() {
 		name_size
 	);
 
+
 	if(pBuffer == NULL) {
 		printf("Erro ao alocar pBuffer");
 		return 1;
 	}
 
+	*(int *)getBufferRef(pBuffer, counter_address) = 0;
 
 	do {
 		getOption(pBuffer);
