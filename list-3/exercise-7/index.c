@@ -33,6 +33,8 @@ void *getBufferRef(void *pBuffer, size_t data_address);
 void showBuffer(void *pBuffer);
 void listPersons(void *pBuffer);
 void findPerson(void *pBuffer);
+void deletePerson(void *pBuffer);
+void deletePersonOccurrence(void *pBuffer);
 
 Person personList[list_length];
 
@@ -59,7 +61,7 @@ int main() {
 				createPerson(pBuffer);
 				break;
 			case REMOVE_VALUE:
-				// deleteContact(&pBuffer);
+				deletePerson(pBuffer);
 				break;
 			case FIND_VALUE:
 				findPerson(pBuffer);
@@ -130,6 +132,42 @@ void *getBufferRef(void *pBuffer, size_t data_address) {
 void showBuffer(void *pBuffer) {
 	printf("\n\nOpção: %d  ", *(int *)(getBufferRef(pBuffer, option_address)));
 	printf("Contador: %d\n\n", *(int *)(getBufferRef(pBuffer, counter_address)));
+}
+
+void deletePerson(void *pBuffer) {
+	char *nameBuffer = (char *)(getBufferRef(pBuffer, name_address));
+	int *counter = (int *)(getBufferRef(pBuffer, counter_address));
+
+	if(*counter==0) {
+		printf("\n\nLista vazia!!\n\n");
+		return;
+	}
+
+	printf("Insira a pessoa a ser deletada: ");
+	scanf("%s", nameBuffer);
+
+	deletePersonOccurrence(pBuffer);
+}
+
+void deletePersonOccurrence(void *pBuffer) {
+	int *counter = (int *)(getBufferRef(pBuffer, counter_address));
+	int *index = (int *)(getBufferRef(pBuffer, loop_counter_address));
+	char *nameBuffer = (char *)(getBufferRef(pBuffer, name_address));
+
+	for(*index=0; *index<*counter; *index+=1) {
+		if(strstr(personList[*index].name, nameBuffer)) {
+			// Person to delete;
+			while(*index != *counter - 1) {
+				strcpy(personList[*index].name, personList[*index + 1].name);
+				personList[*index].age = personList[*index + 1].age;
+				personList[*index].phone = personList[*index + 1].phone;
+
+				*index+=1;
+			}
+			*counter-=1;
+			deletePersonOccurrence(pBuffer);
+		}
+	}
 }
 
 void findPerson(void *pBuffer) {
