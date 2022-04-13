@@ -47,6 +47,8 @@ void RESET(void *pBuffer);
 void PUSH(void *pBuffer);
 void LIST(void *pBuffer);
 void FIND(void *pBuffer);
+void POP(void *pBuffer);
+void CLEAR(void *pBuffer);
 void SHOW(void *person);
 int EMPTY(void *pBuffer);
 
@@ -74,7 +76,7 @@ int main() {
 				// createContact(&pBuffer);
 				break;
 			case REMOVE_VALUE:
-				// deleteContact(&pBuffer);
+				POP(pBuffer);
 				break;
 			case FIND_VALUE:
 				FIND(pBuffer);
@@ -83,9 +85,8 @@ int main() {
 				LIST(pBuffer);
 				break;
 			case EXIT_VALUE:
-				// free(pBuffer);
-				// return 0;
-				break;
+				CLEAR(pBuffer);
+				return 0;
 		}
 		
 	}
@@ -220,6 +221,24 @@ void SHOW(void *person) {
 	printf("| Nome: %s\n", (char *)getBufferRef(person, name_address));
 	printf("| Idade: %d\n", *(int *)getBufferRef(person, age_address));
 	printf("| Telefone: %d\n", *(int *)getBufferRef(person, phone_address));
+}
+
+void POP(void *pBuffer) {
+	//
+}
+
+void CLEAR(void *pBuffer) {
+	void *person = *(void **)getBufferRef(pBuffer, start_address);
+	void *auxPerson;
+
+	while(person) {
+		auxPerson = *(void **)getBufferRef(person, next_address);
+		free(person);
+
+		person = auxPerson;
+	}
+
+	free(pBuffer);
 }
 
 void readPerson(void *person) {
