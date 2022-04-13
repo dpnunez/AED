@@ -14,7 +14,6 @@
 // vars sizes
 #define option_size sizeof(int)
 #define counter_size sizeof(int)
-#define loop_counter_size sizeof(int)
 #define start_size sizeof(void *)
 #define end_size sizeof(void *)
 #define name_size ((name_length + 1) * sizeof(char))
@@ -22,13 +21,14 @@
 #define age_size (sizeof(int))
 #define next_size (sizeof(void *))
 #define previous_size (sizeof(void *))
+#define search_name_size (sizeof(char) * 10)
 
 // pBuffer structure
 #define option_address 0
 #define counter_address (option_size)
-#define loop_counter_address (option_size + counter_size)
-#define start_address (option_size + counter_size + loop_counter_size)
-#define end_address (option_size + counter_size + loop_counter_size + end_size)
+#define search_name_address (option_size + counter_size)
+#define start_address (option_size + counter_size + search_name_size)
+#define end_address (option_size + counter_size + search_name_size + start_size)
 
 // person structure
 #define name_address 0
@@ -46,15 +46,20 @@ void SORT(void *pBuffer, void *personToAdd);
 void RESET(void *pBuffer);
 void PUSH(void *pBuffer);
 void LIST(void *pBuffer);
+void FIND(void *pBuffer);
+void SHOW(void *person);
+int EMPTY(void *pBuffer);
+
 
 
 int main() {
-	void *pBuffer = malloc(option_size + counter_size + loop_counter_size + start_size + end_size);
+	void *pBuffer = malloc(option_size + counter_size + search_name_size + start_size + end_size);
 
 	if(pBuffer == NULL) {
 		printf("Erro ao alocar pBuffer");
 		exit(1);
 	}
+
 	RESET(pBuffer);
 
 
@@ -72,17 +77,17 @@ int main() {
 				// deleteContact(&pBuffer);
 				break;
 			case FIND_VALUE:
-				// searchContact(&pBuffer);
+				FIND(pBuffer);
 				break;
 			case LIST_VALUE:
-				// printContacts(&pBuffer);
+				LIST(pBuffer);
 				break;
 			case EXIT_VALUE:
 				// free(pBuffer);
 				// return 0;
 				break;
 		}
-		LIST(pBuffer);
+		
 	}
 }
 
@@ -105,7 +110,7 @@ void menu(int *pOption) {
 void RESET(void *pBuffer) {
 	*(int *)getBufferRef(pBuffer, option_address) = 0;
 	*(int *)getBufferRef(pBuffer, counter_address) = 0;
-	*(int *)getBufferRef(pBuffer, loop_counter_address) = 0;
+	*(int *)getBufferRef(pBuffer, search_name_address) = '\0';
 	*(void **)getBufferRef(pBuffer, start_address) = NULL;
 	*(int **)getBufferRef(pBuffer, end_address) = NULL;
 }
@@ -160,7 +165,7 @@ void SORT(void *pBuffer, void *personToAdd) {
 		currentPerson = *(void **)(getBufferRef(currentPerson, previous_address));
 	}
 
-	// Tratando adicao no inicio
+	// Tratando adição no inicio
 	currentPerson = *(void **)(getBufferRef(pBuffer, start_address));
 
 	*(void **)(getBufferRef(personToAdd, next_address)) = currentPerson;
@@ -172,10 +177,49 @@ void LIST(void *pBuffer) {
 	void *person = *(void **)(getBufferRef(pBuffer, start_address));
 
 	while(person) {
-		printf("\n%s \n", (char *)(getBufferRef(person, name_address)));
+		SHOW(person);
 
 		person = *(void **)(getBufferRef(person, next_address));
 	}
+	printf("_________________\n\n\n");
+}
+
+void FIND(void *pBuffer) {
+	void *person = *(void **)getBufferRef(pBuffer, start_address);
+	char *name = (char *)getBufferRef(pBuffer, search_name_address);
+
+	if(EMPTY(pBuffer)) {
+		printf("\n\n=====Lista vazia=====\n\n");
+		return;
+	}
+
+	printf("Insira o nome do contato que deseja procurar: ");
+	scanf("%s", name);
+
+	printf("\n\n");
+
+	while(person) {
+		if(strcmp(name, getBufferRef(person, name_address)) == 0) {
+			SHOW(person);
+			printf("_________________\n\n");
+			return;
+		}
+		person = *(void **)getBufferRef(person, next_address);
+	}
+
+	printf("\n\nContato nao encontrado!\n\n");
+}
+
+int EMPTY(void *pBuffer) {
+	if(getBufferRef(pBuffer, start_address) == NULL && getBufferRef(pBuffer, end_address) == NULL) return 1;
+	return 0;
+}
+
+void SHOW(void *person) {
+	printf("_________________\n");
+	printf("| Nome: %s\n", (char *)getBufferRef(person, name_address));
+	printf("| Idade: %d\n", *(int *)getBufferRef(person, age_address));
+	printf("| Telefone: %d\n", *(int *)getBufferRef(person, phone_address));
 }
 
 void readPerson(void *person) {
@@ -192,17 +236,16 @@ void readPerson(void *person) {
   }
 
 	printf("\nInserir a idade: ");
-	scanf("%s", (char *)getBufferRef(person, age_address));
+	scanf("%d", (int *)getBufferRef(person, age_address));
 
 	printf("\nInserir a telefone: ");
-	scanf("%s", (char *)getBufferRef(person, phone_address));
+	scanf("%d", (int *)getBufferRef(person, phone_address));
 }
 
 void printPBuffer(void *pBuffer) {
 	printf("\n");
 	printf("option: %d\n", *(int *)getBufferRef(pBuffer, option_address));
 	printf("counter: %d\n", *(int *)getBufferRef(pBuffer, counter_address));
-	printf("loop: %d", *(int *)getBufferRef(pBuffer, loop_counter_address));
 	// printf("start: ", *(int *)getBufferRef(pBuffer, start_address));
 	// printf("end: ", *(int *)getBufferRef(pBuffer, end_address));
 	printf("\n\n");
