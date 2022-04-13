@@ -35,14 +35,17 @@
 #define phone_address (name_size)
 #define age_address (name_size + phone_size)
 #define next_address (name_size + phone_size + age_size)
-#define previous_address (name_size + phone_size + age_size + next_address)
+#define previous_address (name_size + phone_size + age_size + next_size)
 
 
 void printPBuffer(void *pBuffer);
 void menu(int *pOption);
 void *getBufferRef(void *pBuffer, size_t data_address);
+void readPerson(void *person);
+void SORT(void *pBuffer, void *personToAdd);
 void RESET(void *pBuffer);
 void PUSH(void *pBuffer);
+void LIST(void *pBuffer);
 
 
 int main() {
@@ -79,6 +82,7 @@ int main() {
 				// return 0;
 				break;
 		}
+		LIST(pBuffer);
 	}
 }
 
@@ -107,8 +111,74 @@ void RESET(void *pBuffer) {
 }
 
 void PUSH(void *pBuffer) {
-	void *person = (void *)(malloc(name_size + phone_size + age_size + previous_size + next_size));
+	void *person = (void *)malloc(name_size + phone_size + age_size + next_size + previous_size);
 
+	readPerson(person);
+
+	*(void **)(getBufferRef(person, next_address)) = NULL;
+	*(void **)(getBufferRef(person, previous_address)) = NULL;
+
+
+	if(*(void **)getBufferRef(pBuffer, start_address) == NULL) {
+			*(void **)(getBufferRef(pBuffer, start_address)) = person;
+    	*(void **)(getBufferRef(pBuffer, end_address)) = person;
+
+			return;
+	}
+
+	SORT(pBuffer, person);
+}
+
+void SORT(void *pBuffer, void *personToAdd) {
+	void *currentPerson = *(void **)(getBufferRef(pBuffer, end_address));
+	void *personToAddName = (char *)(getBufferRef(personToAdd, name_address));
+
+	while(currentPerson != NULL) {
+		char *currentPersonName = (char *)(getBufferRef(currentPerson, name_address));
+
+		if(strcmp(currentPerson, personToAddName) <= 0) {
+			if(*(void **)getBufferRef(currentPerson, next_address) == NULL) {
+				// Adicionando no final da fila
+				*(void **)(getBufferRef(personToAdd, previous_address)) = currentPerson;
+				*(void **)(getBufferRef(personToAdd, next_address)) = NULL;
+
+				*(void **)(getBufferRef(currentPerson, next_address)) = personToAdd;
+				*(void **)(getBufferRef(pBuffer, end_address)) = personToAdd;
+				return;
+			}
+
+			// Adicionando no meio da fila;
+			*(void **)(getBufferRef(personToAdd, previous_address)) = currentPerson;
+			*(void **)(getBufferRef(personToAdd, next_address)) = *(void **)(getBufferRef(currentPerson, next_address));
+
+			void *tempPerson = *(void **)(getBufferRef(currentPerson, next_address));
+			*(void **)(getBufferRef(currentPerson, next_address)) = personToAdd;
+			*(void **)(getBufferRef(tempPerson, previous_address)) = personToAdd;
+			
+			return;
+		}
+		currentPerson = *(void **)(getBufferRef(currentPerson, previous_address));
+	}
+
+	// Tratando adicao no inicio
+	currentPerson = *(void **)(getBufferRef(pBuffer, start_address));
+
+	*(void **)(getBufferRef(personToAdd, next_address)) = currentPerson;
+	*(void **)(getBufferRef(currentPerson, previous_address)) = personToAdd;
+	*(void **)(getBufferRef(pBuffer, start_address)) = personToAdd;
+}
+
+void LIST(void *pBuffer) {
+	void *person = *(void **)(getBufferRef(pBuffer, start_address));
+
+	while(person) {
+		printf("\n%s \n", (char *)(getBufferRef(person, name_address)));
+
+		person = *(void **)(getBufferRef(person, next_address));
+	}
+}
+
+void readPerson(void *person) {
 	printf("\nInserir o nome: ");
 	scanf("%s", (char *)getBufferRef(person, name_address));
 
@@ -126,17 +196,7 @@ void PUSH(void *pBuffer) {
 
 	printf("\nInserir a telefone: ");
 	scanf("%s", (char *)getBufferRef(person, phone_address));
-
-	if(*(int *)getBufferRef(pBuffer, start_address) == NULL) {
-		// Adicionando primeira pessoa;
-			*(void **)getBufferRef(person, next_address) = NULL;
-			*(void **)getBufferRef(person, next_address) = NULL;
-
-			*(void **)getBufferRef(pBuffer, start_address) = person;
-			*(void **)getBufferRef(pBuffer, end_address) = person;
-	}
 }
-
 
 void printPBuffer(void *pBuffer) {
 	printf("\n");
@@ -147,3 +207,4 @@ void printPBuffer(void *pBuffer) {
 	// printf("end: ", *(int *)getBufferRef(pBuffer, end_address));
 	printf("\n\n");
 }
+
