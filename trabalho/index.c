@@ -46,7 +46,8 @@ void SORT(void *pBuffer, void *personToAdd);
 void RESET(void *pBuffer);
 void PUSH(void *pBuffer);
 void LIST(void *pBuffer);
-void FIND(void *pBuffer);
+void *FIND(void *pBuffer, char *name);
+void SEARCH(void *pBuffer);
 void POP(void *pBuffer);
 void CLEAR(void *pBuffer);
 void SHOW(void *person);
@@ -79,7 +80,7 @@ int main() {
 				POP(pBuffer);
 				break;
 			case FIND_VALUE:
-				FIND(pBuffer);
+				SEARCH(pBuffer);
 				break;
 			case LIST_VALUE:
 				LIST(pBuffer);
@@ -185,9 +186,9 @@ void LIST(void *pBuffer) {
 	printf("_________________\n\n\n");
 }
 
-void FIND(void *pBuffer) {
-	void *person = *(void **)getBufferRef(pBuffer, start_address);
+void SEARCH(void *pBuffer) {
 	char *name = (char *)getBufferRef(pBuffer, search_name_address);
+	void *person;
 
 	if(EMPTY(pBuffer)) {
 		printf("\n\n=====Lista vazia=====\n\n");
@@ -199,14 +200,28 @@ void FIND(void *pBuffer) {
 
 	printf("\n\n");
 
+	person = FIND(pBuffer, name);
+
+	if(!!person) {
+		SHOW(person);
+		printf("_________________\n\n");
+		return;
+	}
+
+	printf("Contato nao encontrado");
+}
+
+void *FIND(void *pBuffer, char *name) {
+	void *person = *(void **)getBufferRef(pBuffer, start_address);
+
 	while(person) {
 		if(strcmp(name, getBufferRef(person, name_address)) == 0) {
-			SHOW(person);
-			printf("_________________\n\n");
-			return;
+			return person;
 		}
 		person = *(void **)getBufferRef(person, next_address);
 	}
+
+	return NULL;
 
 	printf("\n\nContato nao encontrado!\n\n");
 }
