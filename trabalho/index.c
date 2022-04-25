@@ -107,6 +107,7 @@ void menu(int *pOption) {
 	printf("[%d] - LISTAR\n", LIST_VALUE);
 	printf("[%d] - SAIR\n\n", EXIT_VALUE);
 
+	printf("Insira uma opcao: ");
 	scanf("%d", pOption);
 }
 
@@ -209,11 +210,12 @@ void SEARCH(void *pBuffer) {
 
 	while(person) {
 		SHOW(person);
-		printf("_________________\n\n");
 
 		person = FIND(*(void **)getBufferRef(person, next_address), name);
 		*searchFlag = 1;
 	}
+	printf("_________________\n\n");
+	
 	if(!*searchFlag) printf("Contato nao encontrado");
 	return;
 }
