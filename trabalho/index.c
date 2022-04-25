@@ -22,6 +22,7 @@
 #define next_size (sizeof(void *))
 #define previous_size (sizeof(void *))
 #define search_name_size (sizeof(char) * 10)
+#define search_flag_size sizeof (int)
 
 // pBuffer structure
 #define option_address 0
@@ -29,6 +30,7 @@
 #define search_name_address (option_size + counter_size)
 #define start_address (option_size + counter_size + search_name_size)
 #define end_address (option_size + counter_size + search_name_size + start_size)
+#define search_flag_address (option_size + counter_size + search_name_size + start_size + end_size)
 
 // person structure
 #define name_address 0
@@ -56,7 +58,7 @@ int EMPTY(void *pBuffer);
 
 
 int main() {
-	void *pBuffer = malloc(option_size + counter_size + search_name_size + start_size + end_size);
+	void *pBuffer = malloc(option_size + counter_size + search_name_size + start_size + end_size + search_flag_size);
 
 	if(pBuffer == NULL) {
 		printf("Erro ao alocar pBuffer");
@@ -188,6 +190,7 @@ void LIST(void *pBuffer) {
 
 void SEARCH(void *pBuffer) {
 	char *name = (char *)getBufferRef(pBuffer, search_name_address);
+	int *searchFlag = (int *)getBufferRef(pBuffer, search_flag_address);
 	void *person;
 
 	if(EMPTY(pBuffer)) {
@@ -195,24 +198,28 @@ void SEARCH(void *pBuffer) {
 		return;
 	}
 
-	printf("Insira o nome do contato que deseja procurar: ");
+	*searchFlag = 0;
+
+	printf("Insira o nome do contato: ");
 	scanf("%s", name);
 
 	printf("\n\n");
 
-	person = FIND(pBuffer, name);
+	person = FIND(*(void **)getBufferRef(pBuffer, start_address), name);
 
-	if(!!person) {
+	while(person) {
 		SHOW(person);
 		printf("_________________\n\n");
-		return;
-	}
 
-	printf("Contato nao encontrado");
+		person = FIND(*(void **)getBufferRef(person, next_address), name);
+		*searchFlag = 1;
+	}
+	if(!*searchFlag) printf("Contato nao encontrado");
+	return;
 }
 
-void *FIND(void *pBuffer, char *name) {
-	void *person = *(void **)getBufferRef(pBuffer, start_address);
+void *FIND(void *initial, char *name) {
+	void *person = initial;
 
 	while(person) {
 		if(strcmp(name, getBufferRef(person, name_address)) == 0) {
@@ -239,7 +246,54 @@ void SHOW(void *person) {
 }
 
 void POP(void *pBuffer) {
-	//
+	char *name = (char *)getBufferRef(pBuffer, search_name_address);
+	int *searchFlag = (int *)getBufferRef(pBuffer, search_flag_address);
+	void *person;
+	void *auxPerson;
+
+	if(EMPTY(pBuffer)) {
+		printf("\n\n=====Lista vazia=====\n\n");
+		return;
+	}
+
+	*searchFlag = 0;
+
+	printf("Insira o nome do contato: ");
+	scanf("%s", name);
+
+	printf("\n\n");
+
+	person = FIND(*(void **)getBufferRef(pBuffer, start_address), name);
+
+	while(person) {
+		if(person == *(void **)getBufferRef(pBuffer, start_address)) {
+			// Primeira pessoa
+			*(void **)getBufferRef(pBuffer, start_address) = *(void **)getBufferRef(person, next_address);
+				if(person == *(void **)getBufferRef(pBuffer, end_address)) {
+					// Única pessoa da lista
+					*(void **)getBufferRef(pBuffer, end_address) = NULL;
+				}
+			free(person);
+		} else if(person == *(void **)getBufferRef(pBuffer, end_address)) {
+			// Ultima pessoa
+			auxPerson = *(void **)getBufferRef(person, previous_address);
+			*(void **)getBufferRef(pBuffer, end_address) = auxPerson;
+			*(void **)getBufferRef(auxPerson, next_address) = NULL;
+			free(person);
+		} else {
+			// Meio
+			auxPerson = *(void **)getBufferRef(person, previous_address);
+			*(void **)getBufferRef(auxPerson, next_address) = *(void **)getBufferRef(person, next_address);
+
+			auxPerson =  *(void **)getBufferRef(person, next_address);
+			*(void **)getBufferRef(auxPerson, previous_address) = *(void **)getBufferRef(person, previous_address);
+
+			free(person);
+		}
+
+		*searchFlag = 1;
+		person = FIND(*(void **)getBufferRef(pBuffer, start_address), name);
+	}
 }
 
 void CLEAR(void *pBuffer) {
