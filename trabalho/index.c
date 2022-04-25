@@ -181,6 +181,11 @@ void SORT(void *pBuffer, void *personToAdd) {
 void LIST(void *pBuffer) {
 	void *person = *(void **)(getBufferRef(pBuffer, start_address));
 
+	if(EMPTY(pBuffer)) {
+		printf("\nLista vazia\n");
+		return;
+	}
+
 	while(person) {
 		SHOW(person);
 
@@ -215,7 +220,7 @@ void SEARCH(void *pBuffer) {
 		*searchFlag = 1;
 	}
 	printf("_________________\n\n");
-	
+
 	if(!*searchFlag) printf("Contato nao encontrado");
 	return;
 }
@@ -271,7 +276,7 @@ void POP(void *pBuffer) {
 		if(person == *(void **)getBufferRef(pBuffer, start_address)) {
 			// Primeira pessoa
 			*(void **)getBufferRef(pBuffer, start_address) = *(void **)getBufferRef(person, next_address);
-				if(person == *(void **)getBufferRef(pBuffer, end_address)) {
+				if(EMPTY(pBuffer)) {
 					// Única pessoa da lista
 					*(void **)getBufferRef(pBuffer, end_address) = NULL;
 				}
