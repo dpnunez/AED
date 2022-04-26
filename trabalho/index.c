@@ -272,7 +272,7 @@ void POP(void *pBuffer) {
 	person = FIND(*(void **)getBufferRef(pBuffer, start_address), name);
 
 	while(person) {
-		if(person == *(void **)getBufferRef(pBuffer, start_address)) {
+		if(EMPTY(pBuffer)) {
 			// Primeira pessoa
 			*(void **)getBufferRef(pBuffer, start_address) = *(void **)getBufferRef(person, next_address);
 				if(person == *(void **)getBufferRef(pBuffer, end_address)) {
