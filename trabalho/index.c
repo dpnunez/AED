@@ -40,7 +40,6 @@
 #define previous_address (next_address + next_size)
 
 
-void printPBuffer(void *pBuffer);
 void menu(int *pOption);
 void *getBufferRef(void *pBuffer, size_t data_address);
 void readPerson(void *person);
@@ -279,15 +278,12 @@ void POP(void *pBuffer) {
 				if(person == *(void **)getBufferRef(pBuffer, end_address)) {
 					// Única pessoa da lista
 					*(void **)getBufferRef(pBuffer, end_address) = NULL;
-					*(void **)getBufferRef(pBuffer, end_address) = NULL;
 				}
-			free(person);
 		} else if(person == *(void **)getBufferRef(pBuffer, end_address)) {
 			// Ultima pessoa
 			auxPerson = *(void **)getBufferRef(person, previous_address);
 			*(void **)getBufferRef(pBuffer, end_address) = auxPerson;
 			*(void **)getBufferRef(auxPerson, next_address) = NULL;
-			free(person);
 		} else {
 			// Meio
 			auxPerson = *(void **)getBufferRef(person, previous_address);
@@ -296,9 +292,9 @@ void POP(void *pBuffer) {
 			auxPerson =  *(void **)getBufferRef(person, next_address);
 			*(void **)getBufferRef(auxPerson, previous_address) = *(void **)getBufferRef(person, previous_address);
 
-			free(person);
 		}
 
+		free(person);
 		*searchFlag = 1;
 		person = FIND(*(void **)getBufferRef(pBuffer, start_address), name);
 	}
