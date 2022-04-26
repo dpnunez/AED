@@ -27,17 +27,17 @@
 // pBuffer structure
 #define option_address 0
 #define counter_address (option_size)
-#define search_name_address (option_size + counter_size)
-#define start_address (option_size + counter_size + search_name_size)
-#define end_address (option_size + counter_size + search_name_size + start_size)
-#define search_flag_address (option_size + counter_size + search_name_size + start_size + end_size)
+#define search_name_address (counter_address + counter_size)
+#define search_flag_address (search_name_address + search_name_size)
+#define start_address (search_flag_address + search_flag_size)
+#define end_address (start_address + start_size)
 
 // person structure
 #define name_address 0
 #define phone_address (name_size)
-#define age_address (name_size + phone_size)
-#define next_address (name_size + phone_size + age_size)
-#define previous_address (name_size + phone_size + age_size + next_size)
+#define age_address (phone_address + phone_size)
+#define next_address (age_address + age_size)
+#define previous_address (next_address + next_size)
 
 
 void printPBuffer(void *pBuffer);
@@ -67,16 +67,11 @@ int main() {
 
 	RESET(pBuffer);
 
-
-	// printPBuffer(pBuffer);
-
-
 	while(1) {
 		menu(pBuffer);
 		switch(*(int *)getBufferRef(pBuffer, option_address)) {
 			case ADD_VALUE:
 				PUSH(pBuffer);
-				// createContact(&pBuffer);
 				break;
 			case REMOVE_VALUE:
 				POP(pBuffer);
@@ -182,7 +177,7 @@ void LIST(void *pBuffer) {
 	void *person = *(void **)(getBufferRef(pBuffer, start_address));
 
 	if(EMPTY(pBuffer)) {
-		printf("\nLista vazia\n");
+		printf("\n\n=====Lista vazia=====\n\n");
 		return;
 	}
 
@@ -241,11 +236,16 @@ void *FIND(void *initial, char *name) {
 }
 
 int EMPTY(void *pBuffer) {
-	if(getBufferRef(pBuffer, start_address) == NULL && getBufferRef(pBuffer, end_address) == NULL) return 1;
+	if(*(void **)getBufferRef(pBuffer, start_address) == NULL && *(void **)getBufferRef(pBuffer, end_address) == NULL) return 1;
 	return 0;
 }
 
 void SHOW(void *person) {
+	if(!person) {
+		printf("Contato nao existe!");
+		return;	
+	}
+
 	printf("_________________\n");
 	printf("| Nome: %s\n", (char *)getBufferRef(person, name_address));
 	printf("| Idade: %d\n", *(int *)getBufferRef(person, age_address));
@@ -276,8 +276,9 @@ void POP(void *pBuffer) {
 		if(person == *(void **)getBufferRef(pBuffer, start_address)) {
 			// Primeira pessoa
 			*(void **)getBufferRef(pBuffer, start_address) = *(void **)getBufferRef(person, next_address);
-				if(EMPTY(pBuffer)) {
+				if(person == *(void **)getBufferRef(pBuffer, end_address)) {
 					// Única pessoa da lista
+					*(void **)getBufferRef(pBuffer, end_address) = NULL;
 					*(void **)getBufferRef(pBuffer, end_address) = NULL;
 				}
 			free(person);
@@ -336,13 +337,3 @@ void readPerson(void *person) {
 	printf("\nInserir a telefone: ");
 	scanf("%d", (int *)getBufferRef(person, phone_address));
 }
-
-void printPBuffer(void *pBuffer) {
-	printf("\n");
-	printf("option: %d\n", *(int *)getBufferRef(pBuffer, option_address));
-	printf("counter: %d\n", *(int *)getBufferRef(pBuffer, counter_address));
-	// printf("start: ", *(int *)getBufferRef(pBuffer, start_address));
-	// printf("end: ", *(int *)getBufferRef(pBuffer, end_address));
-	printf("\n\n");
-}
-
