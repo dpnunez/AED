@@ -173,7 +173,7 @@ int spinRight(Node **ppRoot) {
 }
 
 void validationAVL(Node *ppRoot) {
-	if(ppRoot) {
+	if(isAVL(ppRoot)) {
 		printf("\nSucesso! É uma arvore AVL\n");
 	} else { 
 		printf("\nNao respeitando o algoritimo AVL!\n");
