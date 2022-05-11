@@ -14,6 +14,8 @@ Este subdiretório tem a finalidade de alocar as entregas referentes a lista 4 d
 	- 7.2
 		- 7.2.1
 
+- Explicação sobre RB tree
+
 # Como rodar
 
   
