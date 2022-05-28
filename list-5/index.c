@@ -15,6 +15,8 @@ void generateSortLog(int vector[], int originalVector[], int size);
 
 // Sort algo.
 void selectionSort(int arr[], int n);
+void insertionSort(int vector[], int n);
+void quickSort(int dataVector[], int left, int right);
 
 int main() {
 	int 
@@ -128,10 +130,35 @@ void insertionSort(int vector[], int n) {
   }
 }
 
+void quickSort(int dataVector[], int left, int right) {
+  int pivot, temp;
+  int i = left, j = right;
+  pivot = dataVector[(left + right) / 2];
+
+  do {
+    while (dataVector[i] < pivot) { 
+      i++;
+    }
+    while (dataVector[j] > pivot) { 
+      j--;
+    }
+    if (i <= j) {
+			swap(&dataVector[i], &dataVector[j]);
+      i++;
+      j--;
+    }
+  } while (i <= j);
+  if (left < j) {
+    quickSort(dataVector, left, j);
+  }
+  if (right > j) {
+    quickSort(dataVector, i, right);
+  }
+}
+
 void generateSortLog(int vector[], int originalVector[], int size) {
 	printf("\n\n---RELATÓRIO DE ALGORITIMOS---\n");
 
-	// Selection sort
 	printf("Selection sort: ");
 	selectionSort(vector, size);
 	printVector(vector, size);
@@ -139,6 +166,11 @@ void generateSortLog(int vector[], int originalVector[], int size) {
 
 	printf("\nInsertion sort: ");
 	insertionSort(vector, size);
+	printVector(vector, size);
+	resetVector(originalVector, vector, size);
+
+	printf("\nQuick Sort: ");
+	quickSort(vector, 0, size-1);
 	printVector(vector, size);
 	resetVector(originalVector, vector, size);
 }
