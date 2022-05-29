@@ -43,7 +43,7 @@ int main() {
 					originalVector = malloc(sizeof(int) * size);
 				} else {
 					vector = realloc(vector, sizeof(int) * size);
-					originalVector = realloc(vector, sizeof(int) * size);
+					originalVector = realloc(originalVector, sizeof(int) * size);
 				}
 				buildRandomVector(originalVector, size);
 				resetVector(originalVector, vector, size);
@@ -132,32 +132,27 @@ void insertionSort(int vector[], int n) {
   }
 }
 
-void quickSort(int dataVector[], int left, int right) {
-  int pivot, temp;
-  int i = left, j = right;
-  pivot = dataVector[(left + right) / 2];
-
-  do {
-    while (dataVector[i] < pivot) { 
-      i++;
-    }
-    while (dataVector[j] > pivot) { 
-      j--;
-    }
-    if (i <= j) {
-			swap(&dataVector[i], &dataVector[j]);
-      i++;
-      j--;
-    }
-  } while (i <= j);
-  if (left < j) {
-    quickSort(dataVector, left, j);
-  }
-  if (right > j) {
-    quickSort(dataVector, i, right);
-  }
+void quickSort(int vector[], int left, int right) {
+	int pivot, i, j;
+	i = left;
+	j = right;
+	pivot = vector[(left + right) / 2];
+	do {
+		while (vector[i]<pivot)
+			i++;
+		while (pivot<vector[j])
+			j--;
+		if (i <= j) {
+			swap(&vector[i], &vector[j]);
+			i++;
+			j--;
+		}
+	} while (i <= j);
+	if (left<j)
+		quickSort(vector, left, j);
+	if (i<right)
+		quickSort(vector, i, right);
 }
-
 
 void mergeSort(int dataVector[], int size, int left, int right) {
   if (left >= right) {
@@ -212,21 +207,21 @@ void generateSortLog(int vector[], int originalVector[], int size) {
 
 	printf("Selection sort: ");
 	selectionSort(vector, size);
-	printVector(vector, size);
+	// printVector(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nInsertion sort: ");
 	insertionSort(vector, size);
-	printVector(vector, size);
+	// printVector(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nQuick sort: ");
 	quickSort(vector, 0, size-1);
-	printVector(vector, size);
+	// printVector(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nMerge sort: ");
 	mergeSort(vector, size, 0, size - 1);
-	printVector(vector, size);
+	// printVector(vector, size);
 	resetVector(originalVector, vector, size);
 }
