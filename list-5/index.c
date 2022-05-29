@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 #define generate_value 1
 #define exit_value 2
@@ -13,6 +14,7 @@ void swap(int *a, int *b);
 void resetVector(int original[], int sortable[], int n);
 void generateSortLog(int vector[], int originalVector[], int size);
 void merge(int dataVector[], int size, int left, int middle, int right);
+void checkOrder(int dataVector[], int vectorSize);
 
 // Sort algo.
 void selectionSort(int arr[], int n);
@@ -171,57 +173,98 @@ void mergeSort(int dataVector[], int size, int left, int right) {
 }
 
 void merge(int dataVector[], int size, int left, int middle, int right) {
-  int auxIndex = left, iniciodataVector = left, middleIndex = middle + 1;
-  int vetorAux[size];
+  int auxIndex = left, startVector = left, middleIndex = middle + 1;
+  int vectorAux[size];
 
   for (int i = left; i <= right; i++) { 
-    vetorAux[i] = dataVector[i];
+    vectorAux[i] = dataVector[i];
   }
 
-  while (iniciodataVector <= middle && middleIndex <= right) {
-    if (vetorAux[iniciodataVector] <= vetorAux[middleIndex]) {
-      dataVector[auxIndex] = vetorAux[iniciodataVector];
-      iniciodataVector++;
+  while (startVector <= middle && middleIndex <= right) {
+    if (vectorAux[startVector] <= vectorAux[middleIndex]) {
+      dataVector[auxIndex] = vectorAux[startVector];
+      startVector++;
     } else {
-      dataVector[auxIndex] = vetorAux[middleIndex];
+      dataVector[auxIndex] = vectorAux[middleIndex];
       middleIndex++;
     }
     auxIndex++;
   }
 
-  while (iniciodataVector <= middle) {
-    dataVector[auxIndex] = vetorAux[iniciodataVector];
+  while (startVector <= middle) {
+    dataVector[auxIndex] = vectorAux[startVector];
     auxIndex++;
-    iniciodataVector++;
+    startVector++;
   }
 
   while (middleIndex <= right) {
-    dataVector[auxIndex] = vetorAux[middleIndex];
+    dataVector[auxIndex] = vectorAux[middleIndex];
     auxIndex++;
     middleIndex++;
   }
 }
 
+void checkOrder(int dataVector[], int vectorSize) {
+  for (int i = 0; i < vectorSize - 1; i++) {
+    if (dataVector[i] > dataVector[i + 1]) {
+      printf("\n  -Lista não ordenada!!\n");
+      return;
+    }
+  }
+  printf("\n  -Lista ordenada com sucesso\n");
+  return;
+}
+
+
 void generateSortLog(int vector[], int originalVector[], int size) {
-	printf("\n\n---RELATÓRIO DE ALGORITIMOS---\n");
+	struct timeval begin, end;
+  long seconds;
+  long microseconds;
+  double elapsed;
+
+	printf("\n\n---RELATÓRIO DE ALGORÍTIMOS---\n");
 
 	printf("Selection sort: ");
+	gettimeofday(&begin, 0);
 	selectionSort(vector, size);
-	// printVector(vector, size);
+	gettimeofday(&end, 0);
+	seconds = end.tv_sec - begin.tv_sec;
+	microseconds = end.tv_usec - begin.tv_usec;
+	elapsed = seconds + microseconds*1e-6;
+	printf("\n  -WallTime: %.3f ms.", elapsed * 1000);
+	checkOrder(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nInsertion sort: ");
+	gettimeofday(&begin, 0);
 	insertionSort(vector, size);
-	// printVector(vector, size);
+	gettimeofday(&end, 0);
+	seconds = end.tv_sec - begin.tv_sec;
+	microseconds = end.tv_usec - begin.tv_usec;
+	elapsed = seconds + microseconds*1e-6;
+	printf("\n  -WallTime: %.3f ms.", elapsed * 1000);
+	checkOrder(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nQuick sort: ");
+	gettimeofday(&begin, 0);
 	quickSort(vector, 0, size-1);
-	// printVector(vector, size);
+	gettimeofday(&end, 0);
+	seconds = end.tv_sec - begin.tv_sec;
+	microseconds = end.tv_usec - begin.tv_usec;
+	elapsed = seconds + microseconds*1e-6;
+	printf("\n  -WallTime: %.3f ms.", elapsed * 1000);
+	checkOrder(vector, size);
 	resetVector(originalVector, vector, size);
 
 	printf("\nMerge sort: ");
+	gettimeofday(&begin, 0);
 	mergeSort(vector, size, 0, size - 1);
-	// printVector(vector, size);
+	gettimeofday(&end, 0);
+	seconds = end.tv_sec - begin.tv_sec;
+	microseconds = end.tv_usec - begin.tv_usec;
+	elapsed = seconds + microseconds*1e-6;
+	printf("\n  -WallTime: %.3f ms.", elapsed * 1000);
+	checkOrder(vector, size);
 	resetVector(originalVector, vector, size);
 }
