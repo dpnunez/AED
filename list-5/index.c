@@ -12,11 +12,13 @@ void menu(int *option);
 void swap(int *a, int *b);
 void resetVector(int original[], int sortable[], int n);
 void generateSortLog(int vector[], int originalVector[], int size);
+void merge(int dataVector[], int size, int left, int middle, int right);
 
 // Sort algo.
 void selectionSort(int arr[], int n);
 void insertionSort(int vector[], int n);
 void quickSort(int dataVector[], int left, int right);
+void mergeSort(int dataVector[], int size, int left, int right);
 
 int main() {
 	int 
@@ -156,6 +158,55 @@ void quickSort(int dataVector[], int left, int right) {
   }
 }
 
+
+void mergeSort(int dataVector[], int size, int left, int right) {
+  if (left >= right) {
+    return;
+  }
+
+  int middle = (left + right) / 2;
+
+  mergeSort(dataVector, size, left, middle);     
+  mergeSort(dataVector, size, middle + 1, right); 
+
+  if (dataVector[middle] <= dataVector[middle + 1]) { 
+    return;
+  }
+  merge(dataVector, size, left, middle, right); 
+}
+
+void merge(int dataVector[], int size, int left, int middle, int right) {
+  int auxIndex = left, iniciodataVector = left, middleIndex = middle + 1;
+  int vetorAux[size];
+
+  for (int i = left; i <= right; i++) { 
+    vetorAux[i] = dataVector[i];
+  }
+
+  while (iniciodataVector <= middle && middleIndex <= right) {
+    if (vetorAux[iniciodataVector] <= vetorAux[middleIndex]) {
+      dataVector[auxIndex] = vetorAux[iniciodataVector];
+      iniciodataVector++;
+    } else {
+      dataVector[auxIndex] = vetorAux[middleIndex];
+      middleIndex++;
+    }
+    auxIndex++;
+  }
+
+  while (iniciodataVector <= middle) {
+    dataVector[auxIndex] = vetorAux[iniciodataVector];
+    auxIndex++;
+    iniciodataVector++;
+  }
+
+  while (middleIndex <= right) {
+    dataVector[auxIndex] = vetorAux[middleIndex];
+    auxIndex++;
+    middleIndex++;
+  }
+}
+
 void generateSortLog(int vector[], int originalVector[], int size) {
 	printf("\n\n---RELATÓRIO DE ALGORITIMOS---\n");
 
@@ -169,8 +220,13 @@ void generateSortLog(int vector[], int originalVector[], int size) {
 	printVector(vector, size);
 	resetVector(originalVector, vector, size);
 
-	printf("\nQuick Sort: ");
+	printf("\nQuick sort: ");
 	quickSort(vector, 0, size-1);
+	printVector(vector, size);
+	resetVector(originalVector, vector, size);
+
+	printf("\nMerge sort: ");
+	mergeSort(vector, size, 0, size - 1);
 	printVector(vector, size);
 	resetVector(originalVector, vector, size);
 }
