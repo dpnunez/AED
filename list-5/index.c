@@ -30,7 +30,6 @@ int main() {
 	int *vector = NULL;
 	int *originalVector = NULL;
 	
-	// setup seed
 	srand(time(NULL));
 
 	do {
@@ -215,7 +214,6 @@ void checkOrder(int dataVector[], int vectorSize) {
   printf("\n  -Lista ordenada com sucesso\n");
   return;
 }
-
 
 void generateSortLog(int vector[], int originalVector[], int size) {
 	struct timeval begin, end;
