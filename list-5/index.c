@@ -54,6 +54,7 @@ int main() {
 				break;
 			case exit_value:
 				free(vector);
+				free(originalVector);
 				exit(1);
 				break;
 			default: 
